@@ -1,0 +1,9 @@
+{
+    "presets": [
+        ["env", {
+            "targets": {//只转码当前不支持语法
+            "node": "current"
+            }
+        }]
+    ]
+}
