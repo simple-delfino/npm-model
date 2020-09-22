@@ -9,6 +9,7 @@ const symbols = require("log-symbols");
 const validateProjectName = require("validate-npm-package-name");
 const tempUrl = {
     service: "https://github.com/simple-delfino/es6-doc.git",
+    ui: "https://github.com/simple-delfino/vue-cli-doc.git",
 };
 exports.initPlugin = function (name) {
     const result = validateProjectName(name);
@@ -46,6 +47,11 @@ const inquirerHandle = (name) => {
                 } else {
                     spinner.succeed();
                     const fileName = `${answer.name}/package.json`;
+                    const meta = {
+                        name: answer.name,
+                        description: answer.description,
+                        author: answer.author,
+                    };
                     if (fs.existsSync(fileName)) {
                         const content = fs.readFileSync(fileName).toString();
                         const _content = JSON.parse(content);

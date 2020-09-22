@@ -9,6 +9,7 @@ const symbols = require("log-symbols");
 const validateProjectName = require("validate-npm-package-name");
 const tempUrl = {
     service: "https://github.com/simple-delfino/es6-doc.git",
+    ui: "https://github.com/simple-delfino/vue-cli-doc.git",
 };
 exports.initPlugin = function (name) {
     const result = validateProjectName(name);

@@ -9,6 +9,7 @@ const symbols = require("log-symbols");
 const validateProjectName = require("validate-npm-package-name");
 const tempUrl = {
     service: "https://github.com/simple-delfino/es6-doc.git",
+    ui: "https://github.com/simple-delfino/vue-cli-doc.git",
 };
 exports.initPlugin = function (name) {
     const result = validateProjectName(name);
@@ -46,16 +47,18 @@ const inquirerHandle = (name) => {
                 } else {
                     spinner.succeed();
                     const fileName = `${answer.name}/package.json`;
+                    const meta = {
+                        name: answer.name,
+                        description: answer.description,
+                        author: answer.author,
+                    };
                     if (fs.existsSync(fileName)) {
                         const content = fs.readFileSync(fileName).toString();
                         const _content = JSON.parse(content);
                         _content.name = answer.name;
                         _content.description = answer.description;
                         _content.author = answer.author;
-                        fs.writeFileSync(
-                            fileName,
-                            JSON.stringify(_content, "", "\t")
-                        );
+                        fs.writeFileSync(fileName, JSON.stringify(_content,"","\t"));
                     }
                     console.log(symbols.success, chalk.green("项目初始化完成"));
                 }

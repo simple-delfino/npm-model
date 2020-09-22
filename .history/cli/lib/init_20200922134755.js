@@ -9,6 +9,7 @@ const symbols = require("log-symbols");
 const validateProjectName = require("validate-npm-package-name");
 const tempUrl = {
     service: "https://github.com/simple-delfino/es6-doc.git",
+    ui: "https://github.com/simple-delfino/vue-cli-doc.git",
 };
 exports.initPlugin = function (name) {
     const result = validateProjectName(name);
@@ -17,24 +18,29 @@ exports.initPlugin = function (name) {
             symbols.error,
             chalk.red(`Invalid plugin name: "${name}"`)
         );
+        result.errors &&
+            result.errors.forEach((err) => {
+                console.error(chalk.red.dim("Error: " + err));
+            });
+        result.warnings &&
+            result.warnings.forEach((warn) => {
+                console.error(chalk.red.dim("Warning: " + warn));
+            });
         process.exit(1);
     }
     if (!fs.existsSync(name)) {
         inquirerHandle(name);
     } else {
-        console.error(
-            symbols.error,
-            chalk.red(`the directory of ${name} has already existed`)
-        );
+        console
     }
 };
 
 const inquirerHandle = (name) => {
     questionList[0].default = name;
-    questionList[1].default = name;
+    questionList[1].default = name; 
     inquirer.prompt(questionList).then((answer) => {
         spinner.start();
-        console.log(tempUrl[answer.type]);
+        console.log(tempUrl[answer.type])
         download(
             `direct:${tempUrl[answer.type]}`,
             answer.name,
@@ -46,16 +52,15 @@ const inquirerHandle = (name) => {
                 } else {
                     spinner.succeed();
                     const fileName = `${answer.name}/package.json`;
+                    const meta = {
+                        name: answer.name,
+                        description: answer.description,
+                        author: answer.author,
+                    };
                     if (fs.existsSync(fileName)) {
                         const content = fs.readFileSync(fileName).toString();
-                        const _content = JSON.parse(content);
-                        _content.name = answer.name;
-                        _content.description = answer.description;
-                        _content.author = answer.author;
-                        fs.writeFileSync(
-                            fileName,
-                            JSON.stringify(_content, "", "\t")
-                        );
+                        const result = handlebars.compile(content)(meta);
+                        fs.writeFileSync(fileName, result);
                     }
                     console.log(symbols.success, chalk.green("项目初始化完成"));
                 }
@@ -69,7 +74,7 @@ const questionList = [
         type: "input",
         name: "name",
         message: "请输入插件名称:",
-        default: "",
+        default: '',
         filter(val) {
             return val.trim();
         },
@@ -86,7 +91,7 @@ const questionList = [
         type: "input",
         name: "description",
         message: "请提供插件描述:",
-        default: "",
+        default: '',
         validate(val) {
             return true;
         },
